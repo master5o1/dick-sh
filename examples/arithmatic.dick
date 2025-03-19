@@ -1,0 +1,51 @@
+#!/usr/bin/env dick 
+
+DICK three 8===D
+DICK five 8=====D
+
+# add 3 + 5 = 8
+GRAB three
+LONGDICK five
+PEE
+RELEASE addition
+
+# subtract 3 - 5 = -2
+GRAB three
+SMALLDICK five
+PEE
+RELEASE subtraction
+
+# mutliply 3 * 5 = 15
+GRAB three
+HUGEDICK five
+PEE
+RELEASE mutliplication
+
+# divide 3 / 5 = 0
+GRAB three
+TINYDICK five
+PEE
+RELEASE division
+
+# modulo 3 % 5 = 3
+GRAB three
+DRIBBLEDICK five
+PEE
+RELEASE remainder
+
+GRAB 8D
+WEE LINE
+
+GRAB addition
+PEE
+GRAB subtraction
+PEE
+GRAB mutliplication
+PEE
+GRAB division
+PEE
+GRAB remainder
+PEE
+
+GRAB 8D
+WEE LINE

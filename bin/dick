@@ -1,0 +1,105 @@
+#!/usr/bin/env zsh
+
+declare -A memory
+hand=0
+
+## helper function to parse `8====D` number literals
+## also extracts variable values from memory.
+_dick_value() {
+    local value=0
+    if [[ "$1" =~ ^8=*D$ ]]; then
+        value=$(($(echo "$1" | grep -o "=" | wc -l)))
+        echo $value
+        return
+    fi
+    echo $memory["$1"]
+}
+
+## helper function to parse extract HEREDOC and
+## de-indent to ensure an inner `EOF` does not
+## have preceeding spaces. 
+_parse_heredoc_block() {
+    local raw=$(cat)
+    local ident=`echo $raw | head -n 1 | sed -n 's/^\([[:space:]]*\).*/\1/p'`
+    echo $raw | sed "s/^$ident//"
+}
+
+DICK() {
+    local value=$(_dick_value $2)
+    memory["$1"]=$value
+}
+
+GRAB() {
+    hand=$(_dick_value $1)
+}
+
+RELEASE() {
+    memory["$1"]=$hand
+}
+
+LONGDICK() {
+    local operand=$(_dick_value $1)
+    hand=$((hand + $operand))
+}
+
+SMALLDICK() {
+    local operand=$(_dick_value $1)
+    hand=$((hand - $operand))
+}
+
+HUGEDICK() {
+    local operand=$(_dick_value $1)
+    hand=$((hand * $operand))
+}
+
+TINYDICK() {
+    local operand=$(_dick_value $1)
+    hand=$((hand / $operand))
+}
+DRIBBLEDICK() {
+    local operand=$(_dick_value $1)
+    hand=$((hand % $operand))
+}
+
+_line_ending() {
+    if [[ $1 == "LINE" ]]; then
+        printf "\r\n"
+    fi
+}
+
+PEE() {
+    local lineending=""
+    if [[ $1 == "LINE" ]]; then
+        lineending="\r\n"
+    fi
+    printf "${hand}${lineending}"
+}
+
+WEE() {
+    local lineending=""
+    if [[ $1 == "LINE" ]]; then
+        lineending="\r\n"
+    fi
+    printf "\x$(printf %x "$hand")${lineending}"
+}
+
+STROKE() {
+    local block=$(_parse_heredoc_block)
+    while [[ $hand -ge 0 ]]; do
+        eval "$block"
+    done
+}
+
+EDGING() {
+    local block=$(_parse_heredoc_block)
+    if [[ "$hand" -eq 0 ]]; then
+        eval "$block"
+    fi
+}
+
+
+if [[ -f $1 ]]; then
+    source "$1"
+else
+    echo "usage: dick program.dick"
+fi
