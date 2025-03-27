@@ -29,6 +29,18 @@ DICK() {
     memory["$1"]=$value
 }
 
+GRIP() {
+    local prompt="$1"
+    local input=""
+    printf "$prompt 🫳 "
+    read input
+    while [[ ! "$input" =~ ^8=*D$ ]]; do
+        printf "😡 $prompt 🫳 "
+        read input
+    done
+    hand=$(_dick_value $input)
+}
+
 GRAB() {
     hand=$(_dick_value $1)
 }
