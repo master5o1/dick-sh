@@ -50,7 +50,7 @@ PEE LINE
 ```
 
 ### Block level
-I add two language constructs: loop (`STROKE`) and if (`EDGING`).
+I add three language constructs: loop (`STROKE`), if (`EDGING`), and function (`BAG`).
 The inner block makes use of a `<<HEREDOC` string and `eval()` to execute the block.
 
 Indentation must be consistent.
@@ -105,6 +105,57 @@ EDGING <<CUM
     GRAB z
     WEE
 CUM
+```
+
+#### BAG _function_
+
+BAG of Dick operations.  Allows for creating functions or procedures that can be repeatable.
+
+```shell
+DICK plus 8===========================================D
+DICK equals 8=============================================================D
+
+BAG PRINT_EQUATION operand1 operator operand2 <<END
+    GRAB operand1
+    PEE
+    GRAB operator
+    WEE
+    GRAB operand2
+    PEE
+    GRAB equals
+    WEE
+END
+
+DICK A 8===D
+DICK B 8=====D
+PRINT_EQUATION A plus B
+GRAB A
+LONGDICK B
+PEE LINE
+```
+
+### User Input
+
+#### GRIP _numeric input_
+
+GRIP a number provided by the user. A "🫳" prompts the user to provide a number.  
+Input must be in the form of a numeric literal Dick, ie, 8====D.
+
+```shell
+GRIP
+PEE
+```
+
+command line:
+```shell
+ > $ dick ./examples/function.dick
+ 🫳 8===D
+ 🫳 8=====D
+3+5=8
+3-5=-2
+3*5=15
+3/5=0
+3%5=3
 ```
 
 ## License
