@@ -109,6 +109,17 @@ EDGING() {
     fi
 }
 
+BAG() {
+    local name="$1"
+    local block=$(_parse_heredoc_block)
+
+    shift
+    for ((i=1; i <= $#; i++)); do
+        block="${block//${@[$i]}/\$$i}"
+    done
+
+    eval "$name(){;$block;}"
+}
 
 if [[ -f $1 ]]; then
     source "$1"
