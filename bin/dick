@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
-declare -A memory
-hand=0
+declare -A _dick_memory
+_dick_hand=0
 
 ## helper function to parse `8====D` number literals
 ## also extracts variable values from memory.
@@ -12,7 +12,7 @@ _dick_value() {
         echo $value
         return
     fi
-    echo $memory["$1"]
+    echo $_dick_memory["$1"]
 }
 
 ## helper function to parse extract HEREDOC and
@@ -26,7 +26,7 @@ _parse_heredoc_block() {
 
 DICK() {
     local value=$(_dick_value $2)
-    memory["$1"]=$value
+    _dick_memory["$1"]=$value
 }
 
 GRIP() {
@@ -38,39 +38,39 @@ GRIP() {
         printf "😡 $prompt 🫳 "
         read input
     done
-    hand=$(_dick_value $input)
+    _dick_hand=$(_dick_value $input)
 }
 
 GRAB() {
-    hand=$(_dick_value $1)
+    _dick_hand=$(_dick_value $1)
 }
 
 RELEASE() {
-    memory["$1"]=$hand
+    _dick_memory["$1"]=$_dick_hand
 }
 
 LONGDICK() {
     local operand=$(_dick_value $1)
-    hand=$((hand + $operand))
+    _dick_hand=$((_dick_hand + $operand))
 }
 
 SMALLDICK() {
     local operand=$(_dick_value $1)
-    hand=$((hand - $operand))
+    _dick_hand=$((_dick_hand - $operand))
 }
 
 HUGEDICK() {
     local operand=$(_dick_value $1)
-    hand=$((hand * $operand))
+    _dick_hand=$((_dick_hand * $operand))
 }
 
 TINYDICK() {
     local operand=$(_dick_value $1)
-    hand=$((hand / $operand))
+    _dick_hand=$((_dick_hand / $operand))
 }
 DRIBBLEDICK() {
     local operand=$(_dick_value $1)
-    hand=$((hand % $operand))
+    _dick_hand=$((_dick_hand % $operand))
 }
 
 _line_ending() {
@@ -84,7 +84,7 @@ PEE() {
     if [[ $1 == "LINE" ]]; then
         lineending="\r\n"
     fi
-    printf "${hand}${lineending}"
+    printf "${_dick_hand}${lineending}"
 }
 
 WEE() {
@@ -92,19 +92,19 @@ WEE() {
     if [[ $1 == "LINE" ]]; then
         lineending="\r\n"
     fi
-    printf "\x$(printf %x "$hand")${lineending}"
+    printf "\x$(printf %x "$_dick_hand")${lineending}"
 }
 
 STROKE() {
     local block=$(_parse_heredoc_block)
-    while [[ $hand -ge 0 ]]; do
+    while [[ $_dick_hand -ge 0 ]]; do
         eval "$block"
     done
 }
 
 EDGING() {
     local block=$(_parse_heredoc_block)
-    if [[ "$hand" -eq 0 ]]; then
+    if [[ "$_dick_hand" -eq 0 ]]; then
         eval "$block"
     fi
 }
