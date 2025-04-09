@@ -1,0 +1,69 @@
+#!/usr/bin/env dick 
+
+DICK three 8===D
+DICK five 8=====D
+
+DICK F 8======================================================================D
+DICK B 8==================================================================D
+DICK u 8=====================================================================================================================D
+DICK i 8=========================================================================================================D
+DICK z 8==========================================================================================================================D
+
+DICK min 8D
+
+GRAB five
+HUGEDICK five
+HUGEDICK 8====D
+RELEASE max
+
+GRAB min
+RELEASE counter
+
+COCK GO FAST IF counter IS SMALLER THAN max!
+    GRAB counter
+    LONGDICK 8=D
+    RELEASE counter
+
+    GRAB counter
+    DRIBBLEDICK three
+    RELEASE fizz
+
+    GRAB counter
+    DRIBBLEDICK five
+    RELEASE buzz
+
+    LONGDICK fizz
+    RELEASE other
+
+    LOOK! fizz IS JUST LIKE 8D!
+        GRAB F
+        WEE
+        GRAB i
+        WEE
+        GRAB z
+        WEE
+        GRAB z
+        WEE
+    DICK JOKES ARE IMMATURE, SERIOUSLY
+
+    LOOK! buzz IS JUST LIKE 8D!
+        GRAB B
+        WEE
+        GRAB u
+        WEE
+        GRAB z
+        WEE
+        GRAB z
+        WEE
+    DICK JOKES ARE IMMATURE, SERIOUSLY
+
+    LOOK! fizz IS BIGGER THAN 8D!
+        LOOK! buzz IS BIGGER THAN 8D!
+            GRAB counter
+            PEE
+        DICK JOKES ARE IMMATURE, SERIOUSLY
+    DICK JOKES ARE IMMATURE, SERIOUSLY
+
+    GRAB 8D
+    WEE LINE
+ALRIGHT, STOP COCKING AROUND

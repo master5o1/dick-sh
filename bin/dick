@@ -121,8 +121,73 @@ BAG() {
     eval "$name(){;$block;}"
 }
 
+__long_dick_conditional() {
+    local operand1=$(_dick_value $1)
+    local operator=$3
+    local operand2=$(_dick_value $5)
+    local block=$(_parse_heredoc_block)
+
+    case $operator in
+        "BIGGER")
+            if [[ $operand1 -gt $operand2 ]]; then
+                eval "$block"
+            fi
+            ;;
+        "SMALLER")
+            if [[ $operand1 -lt $operand2 ]]; then
+                eval "$block"
+            fi
+            ;;
+        "JUST")
+            if [[ $operand1 -eq $operand2 ]]; then
+                eval "$block"
+            fi
+            ;;
+    esac
+}
+
+__long_dick_loop() {
+    local operand1=$(_dick_value $1)
+    local operand2=$(_dick_value $5)
+    local operator=$3
+    local block=$(_parse_heredoc_block)
+
+    case $operator in
+        "BIGGER")
+            while [[ $operand1 -gt $operand2 ]]; do
+                eval "$block"
+                operand1=$(_dick_value $1)
+                operand2=$(_dick_value $5)
+            done
+            ;;
+        "SMALLER")
+            while [[ $operand1 -lt $operand2 ]]; do
+                eval "$block"
+                operand1=$(_dick_value $1)
+                operand2=$(_dick_value $5)
+            done
+            ;;
+        "JUST")
+            while [[ $operand1 -eq $operand2 ]]; do
+                eval "$block"
+                operand1=$(_dick_value $1)
+                operand2=$(_dick_value $5)
+            done
+            ;;
+    esac
+}
+
+
+__prepocess_long_dick() {
+    cat $1 \
+      | sed -E 's/LOOK\! (.+)\!/__long_dick_conditional \1 <<CUM/g' \
+      | sed 's/DICK JOKES ARE IMMATURE, SERIOUSLY/CUM/g' \
+      | sed -E 's/COCK GO FAST IF (.+)\!/__long_dick_loop \1 <<CUM/g' \
+      | sed 's/ALRIGHT, STOP COCKING AROUND/CUM/g'
+}
+
 if [[ -f $1 ]]; then
-    source "$1"
+    source <(__prepocess_long_dick "$1")
 else
     echo "usage: dick program.dick"
 fi

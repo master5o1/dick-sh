@@ -158,6 +158,34 @@ command line:
 3%5=3
 ```
 
+### LongDick support
+
+[LongDick](https://esolangs.org/wiki/LongDick) adds a way for conditionals and loops.  
+
+This style of syntax isn't directly executable as a shell script, so requires prepocessing the source.
+
+```shell
+COCK GO FAST IF counter IS SMALLER THAN max!
+    GRAB counter
+    LONGDICK 8=D
+    RELEASE counter
+
+    DRIBBLEDICK 8==D
+    RELEASE even
+
+    LOOK! even IS JUST LIKE 8D!
+        GRAB counter
+        PEE LINE
+    DICK JOKES ARE IMMATURE, SERIOUSLY
+ALRIGHT, STOP COCKING AROUND
+```
+
+## See Also
+
+- [Dick](https://esolangs.org/wiki/Dick) page on esolangs.
+- [LongDick](https://esolangs.org/wiki/LongDick) page on esolangs.
+- [maximxlss/dick.py](https://github.com/maximxlss/dick.py), a python implementation with some [examples](https://github.com/maximxlss/dick.py/tree/master/examples).
+
 ## License
 
 Public domain, or _unlicense_, or CC0... I don't care.
