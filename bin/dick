@@ -233,15 +233,22 @@ __longdick_validate_variable_names() {
 typeset -A _dick_default_features=(
   shebang-args      true
   strict-mode       false
+  help              false
 )
-typeset -A _dick_default_features_desc=(
+typeset -A _dick_help_text=(
   shebang-args      "reading arguments from shebang"
-  strict-mode       "strict mode; limit variable names to those permitted in LongDick."
+  strict-mode       "strict mode; limit to permitted variable names in LongDick."
+  help              "show this help"
 )
-typeset -A _dick_default_features_alias=(
+typeset -A _dick_args_alias=(
   -s                    strict-mode
   --strict              strict-mode
   --strict-mode         strict-mode
+  -h                    help
+  --help                help
+)
+typeset -A _dick_alias_only=(
+    help                true
 )
 
 _dick_features=("${(@kv)_dick_default_features}")
@@ -253,13 +260,14 @@ __dick_parse_args() {
     while [[ "$#" -gt 0 ]]; do
         arg="$1"
         case $arg in
-        -s|--strict|--strict-mode) _dick_features[strict-mode]=true; shift;;
         --use-*) _dick_features[${1/--use-/}]=true; shift;;
         --no-*) _dick_features[${1/--no-/}]=false; shift;;
-        -h|--help) _dick_show_help=true; shift ;;
+        -h|--help) _dick_features[help]=true; shift ;;
         *)
             if [[ -f "$1" ]]; then
                 _dick_source_filename="$1"
+            elif [[ "$_dick_default_features[$_dick_args_alias[$1]]" == "false" ]]; then
+                _dick_features[$_dick_args_alias[$1]]=true
             fi
             shift
             ;;
@@ -269,7 +277,7 @@ __dick_parse_args() {
 
 __dick_parse_args $@
 
-if [[ "$_dick_show_help" != "true" ]] && [[ -f $_dick_source_filename ]]; then
+if [[ "$_dick_features[help]" != "true" ]] && [[ -f $_dick_source_filename ]]; then
     if [[ "$_dick_features[shebang-args]" == "true" ]]; then
         __dick_parse_args $(head -n 1 "$_dick_source_filename")
     fi
@@ -279,22 +287,31 @@ else
     echo "Usage: dick [options] program.dick"
     echo
     echo "Options:"
-    echo
-    for key in "${(@k)_dick_default_features_desc}"; do
+    for key in "${(@k)_dick_help_text}"; do
         local is_default=""
-        local desc="${_dick_default_features_desc[$key]}"
+        local line_desc=""
+        local desc="$_dick_help_text[$key]"
+        local indent=""
         if [[ "${_dick_default_features[$key]}" == "true" ]]; then
-            printf "  --no-%-31s %s\n" "$key" "disable $desc"
+            printf "  --no-%-21s %s\n" "$key" "disable $desc"
         else
-            printf "  --use-%-30s %s\n" "$key" "enable $desc"
-            for flag_alias in "${(@k)_dick_default_features_alias}"; do
-                if [[ "${_dick_default_features_alias[$flag_alias]}" == "$key" ]]; then
-                    printf "      %3s\n" "${flag_alias}"
+            if [[ "${_dick_alias_only[$key]}" != "true" ]]; then
+                printf "  --use-%-20s %s\n" "$key" "enable $desc"
+                desc=""
+                indent="  "
+            fi
+            for flag_alias in "${(@k)_dick_args_alias}"; do
+                if [[ "${_dick_args_alias[$flag_alias]}" == "$key" ]]; then
+                    if [[ ! -z $indent ]]; then
+                        printf "%s  %3s%-21s %s\n" "$indent" "${flag_alias}" "" "$desc"
+                    else
+                        printf "  %-26s %s\n" "${flag_alias}" "$desc"
+                        indent="  "
+                    fi
+                    desc=""
                 fi
             done
             echo
         fi
     done
-
-    printf "  %-36s %s\n" "-h, --help" "show this help"
 fi

@@ -27,14 +27,15 @@ chmod +x ./examples/fizzbuzz.dick
 Usage: dick [options] program.dick
 
 Options:
+  --help                     show this help
+     -h                      
 
-  --use-strict-mode                    enable strict mode; limit variable names to those permitted in LongDick.
-       -s
-      --strict
-      --strict-mode
+  --use-strict-mode          enable strict mode; limit to permitted variable names in LongDick.
+     -s                      
+    --strict                      
+    --strict-mode                      
 
-  --no-shebang-args                    disable reading arguments from shebang
-  -h, --help                           show this help
+  --no-shebang-args          disable reading arguments from shebang
 ```
 
 ## Language Extension
