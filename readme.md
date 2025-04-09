@@ -6,8 +6,6 @@ This syntax pattern allows for the opcodes to be implemented as shell script fun
 
 ## Run
 
->usage: dick program.dick
-
 ```shell
 chmod +x ./bin/dick 
 ./bin/dick  ./examples/fizzbuzz.dick
@@ -20,6 +18,23 @@ dick ./examples/fizzbuzz.dick
 ## shebang in fizzbuzz.dick allows direct execution:
 chmod +x ./examples/fizzbuzz.dick
 ./examples/fizzbuzz.dick
+```
+
+## Usage
+
+```shell
+> $ dick --help
+Usage: dick [options] program.dick
+
+Options:
+
+  --use-strict-mode                    enable strict mode; limit variable names to those permitted in LongDick.
+       -s
+      --strict
+      --strict-mode
+
+  --no-shebang-args                    disable reading arguments from shebang
+  -h, --help                           show this help
 ```
 
 ## Language Extension
@@ -178,6 +193,29 @@ COCK GO FAST IF counter IS SMALLER THAN max!
         PEE LINE
     DICK JOKES ARE IMMATURE, SERIOUSLY
 ALRIGHT, STOP COCKING AROUND
+```
+
+#### limited variable names
+
+LongDick is supposed to have a limited list of variable names.
+
+>johnson dick cock schlong penis dong
+
+This can be achieved using strict mode.
+
+```shell
+> $ dick --strict examples/longdick_list_evens.dick
+[ERROR] Invalid variable name 'counter' at examples/longdick_list_evens.dick:04:09
+    ... GRIP "small peepee"
+    ... RELEASE counter
+                ^^^^^^^ 
+        variable 'counter' is not one of 'johnson dick cock schlong penis dong'
+
+[ERROR] Invalid variable name 'max' at examples/longdick_list_evens.dick:06:09
+    ... GRIP "big peepee"
+    ... RELEASE max
+                ^^^ 
+        variable 'max' is not one of 'johnson dick cock schlong penis dong'
 ```
 
 ## See Also

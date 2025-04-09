@@ -1,7 +1,9 @@
 #!/usr/bin/env zsh
-
+typeset -A _dick_features
 declare -A _dick_memory
 _dick_hand=0
+
+_longdick_allowed_variable_names="johnson dick cock schlong penis dong"
 
 ## helper function to parse `8====D` number literals
 ## also extracts variable values from memory.
@@ -186,8 +188,113 @@ __prepocess_long_dick() {
       | sed 's/ALRIGHT, STOP COCKING AROUND/CUM/g'
 }
 
-if [[ -f $1 ]]; then
-    source <(__prepocess_long_dick "$1")
+__print_error() {
+    echo -e "\033[31m$1\033[0m" >&2
+}
+
+__longdick_validate_variable_names() {
+    if [[ "$_dick_features[strict-mode]" != "true" ]]; then
+        return 0
+    fi
+
+    local _CLR_RED="\033[31m"
+    local _CLR_RST="\033[0m"
+    local file_name="$1"
+    local exit_code=0
+    local line_no=0
+    local last_line=""
+    local last_location=""
+    while IFS= read -r line; do
+        ((++line_no))
+        if [[ "$line" =~ ^(DICK|RELEASE)\ ([^ ]+)(\ +.+)?$ ]]; then
+            local opcode="${match[1]}"
+            local name="${match[2]}"
+            local spaces="${opcode//?/ } "
+            local hint="${name//?/^} "
+            local col_no=$(($(echo "$spaces" | grep -o " " | wc -l) + 1))
+            local location="$(printf %02d:%02d "$line_no" "$col_no")"
+            if [[ ! "$_longdick_allowed_variable_names" =~ "$name" ]]; then
+                echo -e "${_CLR_RED}[ERROR] Invalid variable name '$name' at $file_name:$location${_CLR_RST}" >&2
+                echo "${_CLR_RED}    ...${_CLR_RST} $last_line" >&2
+                echo "${_CLR_RED}    ...${_CLR_RST} $line" >&2
+                echo "        $spaces${_CLR_RED}$hint${_CLR_RST}" >&2
+                echo "        variable '$name' is not one of '$_longdick_allowed_variable_names'" >&2
+                echo >&2
+                exit_code=1
+            fi
+        fi
+        last_line="$line"
+        last_location="$location"
+    done < "$file_name"
+
+    [[ $exit_code -ne 0 ]] && exit $exit_code
+}
+
+typeset -A _dick_default_features=(
+  shebang-args      true
+  strict-mode       false
+)
+typeset -A _dick_default_features_desc=(
+  shebang-args      "reading arguments from shebang"
+  strict-mode       "strict mode; limit variable names to those permitted in LongDick."
+)
+typeset -A _dick_default_features_alias=(
+  -s                    strict-mode
+  --strict              strict-mode
+  --strict-mode         strict-mode
+)
+
+_dick_features=("${(@kv)_dick_default_features}")
+
+_dick_source_filename=""
+_dick_show_help=false
+
+__dick_parse_args() {
+    while [[ "$#" -gt 0 ]]; do
+        arg="$1"
+        case $arg in
+        -s|--strict|--strict-mode) _dick_features[strict-mode]=true; shift;;
+        --use-*) _dick_features[${1/--use-/}]=true; shift;;
+        --no-*) _dick_features[${1/--no-/}]=false; shift;;
+        -h|--help) _dick_show_help=true; shift ;;
+        *)
+            if [[ -f "$1" ]]; then
+                _dick_source_filename="$1"
+            fi
+            shift
+            ;;
+        esac
+    done
+}
+
+__dick_parse_args $@
+
+if [[ "$_dick_show_help" != "true" ]] && [[ -f $_dick_source_filename ]]; then
+    if [[ "$_dick_features[shebang-args]" == "true" ]]; then
+        __dick_parse_args $(head -n 1 "$_dick_source_filename")
+    fi
+    __longdick_validate_variable_names "$_dick_source_filename"
+    source <(__prepocess_long_dick "$_dick_source_filename")
 else
-    echo "usage: dick program.dick"
+    echo "Usage: dick [options] program.dick"
+    echo
+    echo "Options:"
+    echo
+    for key in "${(@k)_dick_default_features_desc}"; do
+        local is_default=""
+        local desc="${_dick_default_features_desc[$key]}"
+        if [[ "${_dick_default_features[$key]}" == "true" ]]; then
+            printf "  --no-%-31s %s\n" "$key" "disable $desc"
+        else
+            printf "  --use-%-30s %s\n" "$key" "enable $desc"
+            for flag_alias in "${(@k)_dick_default_features_alias}"; do
+                if [[ "${_dick_default_features_alias[$flag_alias]}" == "$key" ]]; then
+                    printf "      %3s\n" "${flag_alias}"
+                fi
+            done
+            echo
+        fi
+    done
+
+    printf "  %-36s %s\n" "-h, --help" "show this help"
 fi
