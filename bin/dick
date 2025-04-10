@@ -26,11 +26,21 @@ _parse_heredoc_block() {
     echo $raw | sed "s/^$ident//"
 }
 
+# DICK <name> <value>
+# 
+# Assign a <value> to a <name> in memory.
+# @param $1 {string} name of variable.
+# @param $2 {string | numeric} value to assign. May be a variable name or Dick numeric literal.
 DICK() {
     local value=$(_dick_value $2)
     _dick_memory["$1"]=$value
 }
 
+# GRIP <prompt>
+# 
+# Prompts user to enter a Dick numeric literal.
+# Value is assigned to the Hand.
+# @param $1 {string} text to display to the user.
 GRIP() {
     local prompt="$1"
     local input=""
@@ -43,44 +53,71 @@ GRIP() {
     _dick_hand=$(_dick_value $input)
 }
 
+# GRAB <value>
+# 
+# Assigns <value> to the Hand.
+# @param $1 {string | numeric} value to assign. May be a variable name or Dick numeric literal.
 GRAB() {
     _dick_hand=$(_dick_value $1)
 }
 
+# RELEASE <name> <value>
+# 
+# Assign a value of Hand to a <name> in memory.
+# @param $1 {string} name of variable.
 RELEASE() {
     _dick_memory["$1"]=$_dick_hand
 }
 
+# LONDICK <value>
+# 
+# Add <value> to value of the Hand.
+# @param $1 {string | numeric} value to add. May be a variable name or Dick numeric literal.
 LONGDICK() {
     local operand=$(_dick_value $1)
     _dick_hand=$((_dick_hand + $operand))
 }
 
+# SMALLDICK <value>
+# 
+# Subtract <value> from value of the Hand.
+# @param $1 {string | numeric} value to subtract. May be a variable name or Dick numeric literal.
 SMALLDICK() {
     local operand=$(_dick_value $1)
     _dick_hand=$((_dick_hand - $operand))
 }
 
+# HUGEDICK <value>
+# 
+# Multiply value of the Hand by <value>.
+# @param $1 {string | numeric} value to multiply. May be a variable name or Dick numeric literal.
 HUGEDICK() {
     local operand=$(_dick_value $1)
     _dick_hand=$((_dick_hand * $operand))
 }
 
+# TINYDICK <value>
+# 
+# Divide value of the Hand by <value>.
+# @param $1 {string | numeric} value to divide. May be a variable name or Dick numeric literal.
 TINYDICK() {
     local operand=$(_dick_value $1)
     _dick_hand=$((_dick_hand / $operand))
 }
+
+# DRIBBLEDICK <value>
+# 
+# Modulo value of the Hand by <value>.
+# @param $1 {string | numeric} value to modulo. May be a variable name or Dick numeric literal.
 DRIBBLEDICK() {
     local operand=$(_dick_value $1)
     _dick_hand=$((_dick_hand % $operand))
 }
 
-_line_ending() {
-    if [[ $1 == "LINE" ]]; then
-        printf "\r\n"
-    fi
-}
-
+# PEE [LINE]
+# 
+# Output numeric value of Hand to STDIN.
+# @param $1 {"LINE"} (optional) Append "\r\n" to print a new line.
 PEE() {
     local lineending=""
     if [[ $1 == "LINE" ]]; then
@@ -89,6 +126,10 @@ PEE() {
     printf "${_dick_hand}${lineending}"
 }
 
+# WEE [LINE]
+# 
+# Output ASCII character value of Hand to STDIN.
+# @param $1 {"LINE"} (optional) Append "\r\n" to print a new line.
 WEE() {
     local lineending=""
     if [[ $1 == "LINE" ]]; then
@@ -97,6 +138,18 @@ WEE() {
     printf "\x$(printf %x "$_dick_hand")${lineending}"
 }
 
+
+# STROKE <<HEREDOC
+# 
+# A while loop that evaluates the `<<HEREDOC` string on each iteration of the loop.
+# Loop condition is while value of Hand is greater than or equal to zero.
+# 
+# @example print numbers from 5 to 0.
+# GRAB 8=====D
+# STROKE <<CUM
+#   PEE LINE
+#   SMALLDICK 8=D
+# CUM
 STROKE() {
     local block=$(_parse_heredoc_block)
     while [[ $_dick_hand -ge 0 ]]; do
@@ -104,6 +157,17 @@ STROKE() {
     done
 }
 
+# EDGING <<HEREDOC
+# 
+# Evaluates the `<<HEREDOC` string IF value of Hand is equal to zero.
+# 
+# @example print value if that number is divisible by five.
+# GRAB value
+# DRIBBLEDICK 8=====D
+# EDGING <<CUM
+#   GRAB value
+#   PEE LINE
+# CUM
 EDGING() {
     local block=$(_parse_heredoc_block)
     if [[ "$_dick_hand" -eq 0 ]]; then
@@ -111,6 +175,25 @@ EDGING() {
     fi
 }
 
+# BAG <name> [arg1, arg2, ...] <<HEREDOC
+# 
+# Defines a function or procedure.
+# @param $1 {string} name of the function.
+# @param $2...$n {string} parameters of the function.
+#
+# @example
+# BAG P_DIV_5 arg <<END
+#   RELEASE save_hand
+#   GRAB arg
+#   DRIBBLEDICK 8=====D
+#   EDGING <<CUM
+#     GRAB arg
+#     PEE LINE
+#   CUM
+#   GRAB save_hand
+# END
+#
+# P_DIV_5 8=====D
 BAG() {
     local name="$1"
     local block=$(_parse_heredoc_block)
@@ -123,6 +206,21 @@ BAG() {
     eval "$name(){;$block;}"
 }
 
+
+# LOOK! condition
+# 
+# A LongDick conditional that evaluates the inner block
+# of indented code if the condition resolves true.
+#
+# @example print value of johnson if it is odd.
+# GRAB 8===D
+# RELEASE johnson
+# DRIBBLEDICK 8==D
+# RELEASE dong
+# LOOK! dong IS JUST LIKE 8=D!
+#     GRAB johnson
+#     PEE LINE
+# DICK JOKES ARE IMMATURE, SERIOUSLY
 __long_dick_conditional() {
     local operand1=$(_dick_value $1)
     local operator=$3
@@ -148,6 +246,19 @@ __long_dick_conditional() {
     esac
 }
 
+# COCK! loop
+# 
+# A LongDick conditional that evaluates the inner block
+# of indented code if the condition resolves true.
+#
+# @example print numbers ascending from 1 to 5.
+# DICK johnson 8D
+# DICK schlong 8=====D
+# COCK GO FAST IF johnson IS SMALLER THAN schlong!
+#   GRAB johnson
+#   LONGDICK 8=D
+#   PEE LINE
+# ALRIGHT, STOP COCKING AROUND
 __long_dick_loop() {
     local operand1=$(_dick_value $1)
     local operand2=$(_dick_value $5)
@@ -180,16 +291,26 @@ __long_dick_loop() {
 }
 
 
+# preprocessor to rewrite LongDick conditional and loops
+# to a shell-compatible version function call.
+# eg,
+# LOOK! dong IS JUST LIKE 8=D!
+#   GRAB johnson
+#   PEE LINE
+# DICK JOKES ARE IMMATURE, SERIOUSLY
+#
+# becomes
+#
+# __long_dick_conditional dong IS JUST LIKE 8=D <<CUM
+#   GRAB johnson
+#   PEE LINE
+# CUM
 __prepocess_long_dick() {
     cat $1 \
       | sed -E 's/LOOK\! (.+)\!/__long_dick_conditional \1 <<CUM/g' \
       | sed 's/DICK JOKES ARE IMMATURE, SERIOUSLY/CUM/g' \
       | sed -E 's/COCK GO FAST IF (.+)\!/__long_dick_loop \1 <<CUM/g' \
       | sed 's/ALRIGHT, STOP COCKING AROUND/CUM/g'
-}
-
-__print_error() {
-    echo -e "\033[31m$1\033[0m" >&2
 }
 
 __longdick_validate_variable_names() {
