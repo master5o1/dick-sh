@@ -355,11 +355,13 @@ typeset -A _dick_default_features=(
   shebang-args      true
   strict-mode       false
   help              false
+  exec              true
 )
 typeset -A _dick_help_text=(
   shebang-args      "reading arguments from shebang"
   strict-mode       "strict mode; limit to permitted variable names in LongDick."
   help              "show this help"
+  exec              "execute after pre-processing."
 )
 typeset -A _dick_args_alias=(
   -s                    strict-mode
@@ -403,7 +405,12 @@ if [[ "$_dick_features[help]" != "true" ]] && [[ -f $_dick_source_filename ]]; t
         __dick_parse_args $(head -n 1 "$_dick_source_filename")
     fi
     __longdick_validate_variable_names "$_dick_source_filename"
+
+    if [[ "$_dick_features[exec]" == "true" ]]; then
     source <(__prepocess_long_dick "$_dick_source_filename")
+    else
+        __prepocess_long_dick "$_dick_source_filename"
+    fi
 else
     echo "Usage: dick [options] program.dick"
     echo
