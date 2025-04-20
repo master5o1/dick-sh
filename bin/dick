@@ -120,6 +120,20 @@ WEE() {
     [ "$1" = "LINE" ] && echo
 }
 
+# WHIP IT OUT
+# Output ASCII dick to represent the value at hand.
+#
+# WHIP $1 OUT
+# Output ASCII dick to represent the value at $1.
+# @param $1 {string | numeric} value to add. May be a variable name or Dick numeric literal.
+WHIP() {
+    if [ -z "$1" ] || [ "$1" = "IT" ]; then
+        printf "8%*sD\n" "$_dick_hand" "" | sed 's/ /=/g'
+    else
+        printf "8%*sD\n" "$(_dick_value $1)" "" | sed 's/ /=/g'
+    fi
+}
+
 
 # STROKE <<HEREDOC
 # 

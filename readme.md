@@ -49,7 +49,7 @@ Options:
 ```shell
 GRAB 8===D
 DRIBBLEDICK 8=====D
-PEE -> 2
+PEE # -> 2
 ```
 
 #### WEE LINE, PEE LINE
@@ -59,10 +59,23 @@ Use `LINE` parameter to also print a newline character.
 
 ```shell
 GRAB 8===D
-DRIBBLEDICK 8=====D # 3 % 5 = 2
+DRIBBLEDICK 8=====D # 3 % 5 = 3
 PEE
-PEE LINE
-## outputs "22\r\n"
+PEE LINE # -> "33\n"
+```
+
+#### WHIP IT OUT
+
+Output ASCII dick to represent the value at hand.  
+Can replace 'IT' with a variable name to use the value for that variable.
+
+```shell
+GRAB 8===D
+HUGEDICK 8=====D # 3 * 5 = 15
+WHIP IT OUT # -> "8===============D\n"
+
+DICK four 8====D
+WHIP four OUT # -> "8====D\n"
 ```
 
 ### Block level
