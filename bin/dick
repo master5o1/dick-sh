@@ -1,16 +1,13 @@
 #!/bin/sh
-_dick_hand=0
 
+_dick_hand=0
 _longdick_allowed_variable_names="johnson dick cock schlong penis dong"
 
 ## helper function to parse `8====D` number literals
 ## also extracts variable values from memory.
 _dick_value() {
-    local value=0
-
     if expr "$1" : '^8=*D$' > /dev/null; then
-        value=$(($(echo "$1" | grep -o "=" | wc -l)))
-        echo $value
+        echo echo "$1" | grep -o "=" | wc -l
         return
     fi
     eval "echo \$_dick_memory_${1}"
@@ -20,9 +17,9 @@ _dick_value() {
 ## de-indent to ensure an inner `EOF` does not
 ## have preceeding spaces. 
 _parse_heredoc_block() {
-    local raw=$(cat)
-    local ident=$(printf '%s\n' "$raw" | head -n 1 | sed -n 's/^\([[:space:]]*\).*/\1/p')
-    printf '%s\n' "$raw" | sed "s/^$ident//"
+    _raw=$(cat)
+    _ident=$(printf '%s\n' "$_raw" | head -n 1 | sed -n 's/^\([[:space:]]*\).*/\1/p')
+    printf '%s\n' "$_raw" | sed "s/^$_ident//"
 }
 
 # DICK <name> <value>
@@ -31,8 +28,7 @@ _parse_heredoc_block() {
 # @param $1 {string} name of variable.
 # @param $2 {string | numeric} value to assign. May be a variable name or Dick numeric literal.
 DICK() {
-    local value=$(_dick_value $2)
-    eval "_dick_memory_${1}=\"${value}\""
+    eval "_dick_memory_${1}=\"$(_dick_value $2)\""
 }
 
 # RELEASE <name> <value>
@@ -49,15 +45,13 @@ RELEASE() {
 # Value is assigned to the Hand.
 # @param $1 {string} text to display to the user.
 GRIP() {
-    local prompt="$1"
-    local input=""
-    printf "$prompt 🫳 "
-    read input
-    while ! expr "$input" : '^8=*D$' > /dev/null; do
-        printf "😡 $prompt 🫳 "
-        read input
+    printf "$1 🫳 "
+    read _input
+    while ! expr "$_input" : '^8=*D$' > /dev/null; do
+        printf "😡 $1 🫳 "
+        read _input
     done
-    _dick_hand=$(_dick_value $input)
+    _dick_hand=$(($(_dick_value $_input)))
 }
 
 # GRAB <value>
@@ -65,7 +59,7 @@ GRIP() {
 # Assigns <value> to the Hand.
 # @param $1 {string | numeric} value to assign. May be a variable name or Dick numeric literal.
 GRAB() {
-    _dick_hand=$(_dick_value $1)
+    _dick_hand=$(($(_dick_value $1)))
 }
 
 # LONDICK <value>
@@ -73,8 +67,7 @@ GRAB() {
 # Add <value> to value of the Hand.
 # @param $1 {string | numeric} value to add. May be a variable name or Dick numeric literal.
 LONGDICK() {
-    local operand=$(_dick_value $1)
-    _dick_hand=$((_dick_hand + $operand))
+    _dick_hand=$((_dick_hand + $(_dick_value $1)))
 }
 
 # SMALLDICK <value>
@@ -82,8 +75,7 @@ LONGDICK() {
 # Subtract <value> from value of the Hand.
 # @param $1 {string | numeric} value to subtract. May be a variable name or Dick numeric literal.
 SMALLDICK() {
-    local operand=$(_dick_value $1)
-    _dick_hand=$((_dick_hand - $operand))
+    _dick_hand=$((_dick_hand - $(_dick_value $1)))
 }
 
 # HUGEDICK <value>
@@ -91,8 +83,7 @@ SMALLDICK() {
 # Multiply value of the Hand by <value>.
 # @param $1 {string | numeric} value to multiply. May be a variable name or Dick numeric literal.
 HUGEDICK() {
-    local operand=$(_dick_value $1)
-    _dick_hand=$((_dick_hand * $operand))
+    _dick_hand=$((_dick_hand * $(_dick_value $1)))
 }
 
 # TINYDICK <value>
@@ -100,8 +91,7 @@ HUGEDICK() {
 # Divide value of the Hand by <value>.
 # @param $1 {string | numeric} value to divide. May be a variable name or Dick numeric literal.
 TINYDICK() {
-    local operand=$(_dick_value $1)
-    _dick_hand=$((_dick_hand / $operand))
+    _dick_hand=$((_dick_hand / $(_dick_value $1)))
 }
 
 # DRIBBLEDICK <value>
@@ -109,28 +99,25 @@ TINYDICK() {
 # Modulo value of the Hand by <value>.
 # @param $1 {string | numeric} value to modulo. May be a variable name or Dick numeric literal.
 DRIBBLEDICK() {
-    local operand=$(_dick_value $1)
-    _dick_hand=$((_dick_hand % $operand))
+    _dick_hand=$((_dick_hand % $(_dick_value $1)))
 }
 
 # PEE [LINE]
 # 
 # Output numeric value of Hand to STDIN.
-# @param $1 {"LINE"} (optional) Append "\r\n" to print a new line.
+# @param $1 {"LINE"} (optional) New line after printing value.
 PEE() {
-    lineending=""
-    [ "$1" = "LINE" ] && lineending="\r\n"
-    printf "${_dick_hand}${lineending}"
+    printf "%s" "${_dick_hand}"
+    [ "$1" = "LINE" ] && echo
 }
 
 # WEE [LINE]
 # 
 # Output ASCII character value of Hand to STDIN.
-# @param $1 {"LINE"} (optional) Append "\r\n" to print a new line.
+# @param $1 {"LINE"} (optional)  New line after printing character.
 WEE() {
-    lineending=""
-    [ "$1" = "LINE" ] && lineending="\r\n"
-    printf "\\$(printf '%03o' "$_dick_hand")${lineending}"
+    printf "\\$(printf '%03o' "$_dick_hand")"
+    [ "$1" = "LINE" ] && echo
 }
 
 
@@ -146,9 +133,9 @@ WEE() {
 #   SMALLDICK 8=D
 # CUM
 STROKE() {
-    local block=$(_parse_heredoc_block)
+    _stroke_block=$(_parse_heredoc_block)
     while [ $_dick_hand -ge 0 ]; do
-        eval "$block"
+        eval "$_stroke_block"
     done
 }
 
@@ -164,9 +151,9 @@ STROKE() {
 #   PEE LINE
 # CUM
 EDGING() {
-    local block=$(_parse_heredoc_block)
+    _edging_block=$(_parse_heredoc_block)
     if [ "$_dick_hand" -eq 0 ]; then
-        eval "$block"
+        eval "$_edging_block"
     fi
 }
 
@@ -190,18 +177,19 @@ EDGING() {
 #
 # P_DIV_5 8=====D
 BAG() {
-    local name="$1"
-    local block=$(_parse_heredoc_block)
+    _bag_name="$1"
+    _bag_block=$(_parse_heredoc_block)
 
     shift
     i=1
     while [ "$i" -le "$#" ]; do
-        eval "arg=\${$i}"
-        block=$(printf "%s" "$block" | sed "s/${arg}/\$$i/g")
+        eval "_bag_arg=\${$i}"
+        _bag_block=$(printf "%s" "$_bag_block" | sed "s/${_bag_arg}/\$$i/g")
         i=$((i + 1))
     done
 
-    eval "$name(){;$block;}"
+    _bag_fn=$(printf "%s () {\n%s\n};\n" "$_bag_name" "$_bag_block")
+    eval "$_bag_fn"
 }
 
 
@@ -220,25 +208,22 @@ BAG() {
 #     PEE LINE
 # DICK JOKES ARE IMMATURE, SERIOUSLY
 LOOK() {
-    local operand1=$(_dick_value $1)
-    local operator=$3
-    local operand2=$(_dick_value $5)
-    local block=$(_parse_heredoc_block)
+    _look_block=$(_parse_heredoc_block)
 
-    case $operator in
+    case "$3" in
         "BIGGER")
-            if [ $operand1 -gt $operand2 ]; then
-                eval "$block"
+            if [ $(_dick_value $1) -gt $(_dick_value $5) ]; then
+                eval "$_look_block"
             fi
             ;;
         "SMALLER")
-            if [ $operand1 -lt $operand2 ]; then
-                eval "$block"
+            if [ $(_dick_value $1) -lt $(_dick_value $5) ]; then
+                eval "$_look_block"
             fi
             ;;
         "JUST")
-            if [ $operand1 -eq $operand2 ]; then
-                eval "$block"
+            if [ $(_dick_value $1) -eq $(_dick_value $5) ]; then
+                eval "$_look_block"
             fi
             ;;
     esac
@@ -258,31 +243,23 @@ LOOK() {
 #   PEE LINE
 # ALRIGHT, STOP COCKING AROUND
 COCK() {
-    local operand1=$(_dick_value $1)
-    local operand2=$(_dick_value $5)
-    local operator=$3
-    local block=$(_parse_heredoc_block)
+    _cock_operand2=$(_dick_value $5)
+    _cock_block=$(_parse_heredoc_block)
 
-    case $operator in
+    case "$3" in
         "BIGGER")
-            while [ $operand1 -gt $operand2 ]; do
-                eval "$block"
-                operand1=$(_dick_value $1)
-                operand2=$(_dick_value $5)
+            while [ $(_dick_value $1) -gt $(_dick_value $5) ]; do
+                eval "$_cock_block"
             done
             ;;
         "SMALLER")
-            while [ $operand1 -lt $operand2 ]; do
-                eval "$block"
-                operand1=$(_dick_value $1)
-                operand2=$(_dick_value $5)
+            while [ $(_dick_value $1) -lt $(_dick_value $5) ]; do
+                eval "$_cock_block"
             done
             ;;
         "JUST")
-            while [ $operand1 -eq $operand2 ]; do
-                eval "$block"
-                operand1=$(_dick_value $1)
-                operand2=$(_dick_value $5)
+            while [ $(_dick_value $1) -eq $(_dick_value $5) ]; do
+                eval "$_cock_block"
             done
             ;;
     esac
@@ -317,24 +294,24 @@ __longdick_validate_variable_names() {
         return 0
     fi
 
-    local _CLR_RED="$(printf '\033[31m')"
-    local _CLR_RST="$(printf '\033[0m')"
-    local file_name="$1"
-    local exit_code=0
-    local line_no=0
-    local last_line=""
-    local last_location=""
+    _CLR_RED="$(printf '\033[31m')"
+    _CLR_RST="$(printf '\033[0m')"
+    file_name="$1"
+    exit_code=0
+    line_no=0
+    last_line=""
+    last_location=""
     while IFS= read -r line; do
         line_no=$((line_no + 1))
-        local indent=`echo "$line" | sed -n 's/^\([[:space:]]*\).*/\1/p'`
+        indent=`echo "$line" | sed -n 's/^\([[:space:]]*\).*/\1/p'`
         set -- `echo $line | sed "s/^$ident//"`
-        local opcode="$1"
-        local name="$2"
-        local value="$3"
-        local spaces="${indent}$(printf '%*s' "${#opcode}" "") "
+        opcode="$1"
+        name="$2"
+        value="$3"
+        spaces="${indent}$(printf '%*s' "${#opcode}" "") "
 
-        local col_no=$(($(echo "$spaces" | grep -o " " | wc -l) + 1))
-        local location="$(printf %02d:%02d "$line_no" "$col_no")"
+        col_no=$(($(echo "$spaces" | grep -o " " | wc -l) + 1))
+        location="$(printf %02d:%02d "$line_no" "$col_no")"
 
         if [ "$line" = "${indent}DICK JOKES ARE IMMATURE, SERIOUSLY" ]; then
             :
@@ -344,7 +321,7 @@ __longdick_validate_variable_names() {
             case "$_longdick_allowed_variable_names" in
                 *"$name"*) ;;
                 *)
-                    local hint="$(printf '%s\n' "$name" | sed 's/./^/g') "
+                    hint="$(printf '%s\n' "$name" | sed 's/./^/g') "
                     echo "${_CLR_RED}[ERROR] Invalid variable name '$name' at $file_name:$location${_CLR_RST}" >&2
                     echo "${_CLR_RED}    ...${_CLR_RST} $last_line" >&2
                     echo "${_CLR_RED}    ...${_CLR_RST} $line" >&2
