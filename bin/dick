@@ -7,7 +7,8 @@ _longdick_allowed_variable_names="johnson dick cock schlong penis dong"
 ## also extracts variable values from memory.
 _dick_value() {
     local value=0
-    if [[ "$1" =~ ^8=*D$ ]]; then
+
+    if expr "$1" : '^8=*D$' > /dev/null; then
         value=$(($(echo "$1" | grep -o "=" | wc -l)))
         echo $value
         return
@@ -19,9 +20,8 @@ _dick_value() {
 ## de-indent to ensure an inner `EOF` does not
 ## have preceeding spaces. 
 _parse_heredoc_block() {
-    local raw ident
-    raw=$(cat)                # Grab the entire input
-    ident=$(printf '%s\n' "$raw" | head -n 1 | sed -n 's/^\([[:space:]]*\).*/\1/p')
+    local raw=$(cat)
+    local ident=$(printf '%s\n' "$raw" | head -n 1 | sed -n 's/^\([[:space:]]*\).*/\1/p')
     printf '%s\n' "$raw" | sed "s/^$ident//"
 }
 
@@ -53,7 +53,7 @@ GRIP() {
     local input=""
     printf "$prompt 🫳 "
     read input
-    while [[ ! "$input" =~ ^8=*D$ ]]; do
+    while ! expr "$input" : '^8=*D$' > /dev/null; do
         printf "😡 $prompt 🫳 "
         read input
     done
@@ -118,10 +118,8 @@ DRIBBLEDICK() {
 # Output numeric value of Hand to STDIN.
 # @param $1 {"LINE"} (optional) Append "\r\n" to print a new line.
 PEE() {
-    local lineending=""
-    if [[ $1 == "LINE" ]]; then
-        lineending="\r\n"
-    fi
+    lineending=""
+    [ "$1" = "LINE" ] && lineending="\r\n"
     printf "${_dick_hand}${lineending}"
 }
 
@@ -130,11 +128,9 @@ PEE() {
 # Output ASCII character value of Hand to STDIN.
 # @param $1 {"LINE"} (optional) Append "\r\n" to print a new line.
 WEE() {
-    local lineending=""
-    if [[ $1 == "LINE" ]]; then
-        lineending="\r\n"
-    fi
-    printf "\x$(printf %x "$_dick_hand")${lineending}"
+    lineending=""
+    [ "$1" = "LINE" ] && lineending="\r\n"
+    printf "\\$(printf '%03o' "$_dick_hand")${lineending}"
 }
 
 
@@ -151,7 +147,7 @@ WEE() {
 # CUM
 STROKE() {
     local block=$(_parse_heredoc_block)
-    while [[ $_dick_hand -ge 0 ]]; do
+    while [ $_dick_hand -ge 0 ]; do
         eval "$block"
     done
 }
@@ -169,7 +165,7 @@ STROKE() {
 # CUM
 EDGING() {
     local block=$(_parse_heredoc_block)
-    if [[ "$_dick_hand" -eq 0 ]]; then
+    if [ "$_dick_hand" -eq 0 ]; then
         eval "$block"
     fi
 }
@@ -223,7 +219,7 @@ BAG() {
 #     GRAB johnson
 #     PEE LINE
 # DICK JOKES ARE IMMATURE, SERIOUSLY
-__long_dick_conditional() {
+LOOK() {
     local operand1=$(_dick_value $1)
     local operator=$3
     local operand2=$(_dick_value $5)
@@ -231,17 +227,17 @@ __long_dick_conditional() {
 
     case $operator in
         "BIGGER")
-            if [[ $operand1 -gt $operand2 ]]; then
+            if [ $operand1 -gt $operand2 ]; then
                 eval "$block"
             fi
             ;;
         "SMALLER")
-            if [[ $operand1 -lt $operand2 ]]; then
+            if [ $operand1 -lt $operand2 ]; then
                 eval "$block"
             fi
             ;;
         "JUST")
-            if [[ $operand1 -eq $operand2 ]]; then
+            if [ $operand1 -eq $operand2 ]; then
                 eval "$block"
             fi
             ;;
@@ -261,7 +257,7 @@ __long_dick_conditional() {
 #   LONGDICK 8=D
 #   PEE LINE
 # ALRIGHT, STOP COCKING AROUND
-__long_dick_loop() {
+COCK() {
     local operand1=$(_dick_value $1)
     local operand2=$(_dick_value $5)
     local operator=$3
@@ -269,21 +265,21 @@ __long_dick_loop() {
 
     case $operator in
         "BIGGER")
-            while [[ $operand1 -gt $operand2 ]]; do
+            while [ $operand1 -gt $operand2 ]; do
                 eval "$block"
                 operand1=$(_dick_value $1)
                 operand2=$(_dick_value $5)
             done
             ;;
         "SMALLER")
-            while [[ $operand1 -lt $operand2 ]]; do
+            while [ $operand1 -lt $operand2 ]; do
                 eval "$block"
                 operand1=$(_dick_value $1)
                 operand2=$(_dick_value $5)
             done
             ;;
         "JUST")
-            while [[ $operand1 -eq $operand2 ]]; do
+            while [ $operand1 -eq $operand2 ]; do
                 eval "$block"
                 operand1=$(_dick_value $1)
                 operand2=$(_dick_value $5)
@@ -309,57 +305,62 @@ __long_dick_loop() {
 # CUM
 __prepocess_long_dick() {
     cat $1 \
-      | sed -E 's/LOOK\! (.+)\!/__long_dick_conditional \1 <<CUM/g' \
+      | sed -E 's/LOOK\! (.+)\!/LOOK \1 <<CUM/g' \
       | sed 's/DICK JOKES ARE IMMATURE, SERIOUSLY/CUM/g' \
-      | sed -E 's/COCK GO FAST IF (.+)\!/__long_dick_loop \1 <<CUM/g' \
+      | sed -E 's/COCK GO FAST IF (.+)\!/COCK \1 <<CUM/g' \
       | sed 's/ALRIGHT, STOP COCKING AROUND/CUM/g'
     echo
 }
 
 __longdick_validate_variable_names() {
-    if [[ ! "$_dick_features_enabled" =~ "strict-mode" ]]; then
+    if [ $(_use_feature "strict-mode") -eq 0 ]; then
         return 0
     fi
 
-    local _CLR_RED="\033[31m"
-    local _CLR_RST="\033[0m"
+    local _CLR_RED="$(printf '\033[31m')"
+    local _CLR_RST="$(printf '\033[0m')"
     local file_name="$1"
     local exit_code=0
     local line_no=0
     local last_line=""
     local last_location=""
     while IFS= read -r line; do
-        ((++line_no))
+        line_no=$((line_no + 1))
         local indent=`echo "$line" | sed -n 's/^\([[:space:]]*\).*/\1/p'`
         set -- `echo $line | sed "s/^$ident//"`
         local opcode="$1"
         local name="$2"
         local value="$3"
-        local spaces="${indent}${opcode//?/ } "
+        local spaces="${indent}$(printf '%*s' "${#opcode}" "") "
 
         local col_no=$(($(echo "$spaces" | grep -o " " | wc -l) + 1))
         local location="$(printf %02d:%02d "$line_no" "$col_no")"
 
-        if [[ "$line" == "${indent}DICK JOKES ARE IMMATURE, SERIOUSLY" ]]; then
+        if [ "$line" = "${indent}DICK JOKES ARE IMMATURE, SERIOUSLY" ]; then
             :
-        elif [[ "$opcode" != "DICK" ]] && [[ "$opcode" != "RELEASE" ]]; then
+        elif [ "$opcode" != "DICK" ] && [ "$opcode" != "RELEASE" ]; then
             :
-        elif [[ ! "$_longdick_allowed_variable_names" =~ "$name" ]]; then
-            local hint="${name//?/^} "
-            echo "${_CLR_RED}[ERROR] Invalid variable name '$name' at $file_name:$location${_CLR_RST}" >&2
-            echo "${_CLR_RED}    ...${_CLR_RST} $last_line" >&2
-            echo "${_CLR_RED}    ...${_CLR_RST} $line" >&2
-            echo "        $spaces${_CLR_RED}$hint${_CLR_RST}" >&2
-            echo "        variable '$name' is not one of '$_longdick_allowed_variable_names'" >&2
-            echo >&2
-            exit_code=1
+        else
+            case "$_longdick_allowed_variable_names" in
+                *"$name"*) ;;
+                *)
+                    local hint="$(printf '%s\n' "$name" | sed 's/./^/g') "
+                    echo "${_CLR_RED}[ERROR] Invalid variable name '$name' at $file_name:$location${_CLR_RST}" >&2
+                    echo "${_CLR_RED}    ...${_CLR_RST} $last_line" >&2
+                    echo "${_CLR_RED}    ...${_CLR_RST} $line" >&2
+                    echo "        $spaces${_CLR_RED}$hint${_CLR_RST}" >&2
+                    echo "        variable '$name' is not one of '$_longdick_allowed_variable_names'" >&2
+                    echo >&2
+                    exit_code=1
+                ;;
+            esac
         fi
 
         last_line="$line"
         last_location="$location"
     done < "$file_name"
 
-    [[ $exit_code -ne 0 ]] && exit $exit_code
+    [ $exit_code -ne 0 ] && exit $exit_code
 }
 
 _dick_features_available="strict-mode shebang-args exec help"
@@ -380,39 +381,66 @@ _dick_alias_only_help=true
 _dick_source_filename=""
 _dick_show_help=false
 
+_has_feature() {
+    case "$_dick_features_available" in
+        *"$1"*) echo 1;;
+        *) echo 0;;
+    esac
+}
+
+_use_feature() {
+    if [ $(_has_feature "$1") -eq 0 ]; then
+        echo 0
+        return
+    fi
+    case " $_dick_features_enabled " in
+        *"$1"*) echo 1;;
+        *) echo 0;;
+    esac
+}
+
+_is_default_feature() {
+    if [ $(_has_feature "$1") -eq 0 ]; then
+        echo 0
+        return
+    fi
+    case " $_dick_features_default_enabled " in
+        *"$1"*) echo 1;;
+        *) echo 0;;
+    esac
+}
+
 _enable_feature() {
-    if [[ ! "$_dick_features_available" =~ "$1" ]]; then
-        return
-    fi
-    if [[ "$_dick_features_enabled" =~ "$1" ]]; then
-        return
-    fi
+    if [ $(_has_feature "$1") -eq 0 ]; then return; fi;
+    if [ $(_use_feature "$1") -eq 1 ]; then return; fi;
     _dick_features_enabled="${_dick_features_enabled} ${1}"
 }
 
 _disable_feature() {
-    if [[ ! "$_dick_features_available" =~ "$1" ]]; then
-        return
-    fi
-    if [[ ! "$_dick_features_enabled" =~ "$1" ]]; then
-        return
-    fi
-    _dick_features_enabled="${_dick_features_enabled/$1/}"
+    if [ $(_has_feature "$1") -eq 0 ]; then return; fi;
+    if [ $(_use_feature "$1") -eq 0 ]; then return; fi;
+    _dick_features_enabled=$(echo " $_dick_features_enabled" | sed "s/ $1//" | sed "s/^ //")
 }
 
 __dick_parse_args() {
-    while [[ "$#" -gt 0 ]]; do
+    while [ "$#" -gt 0 ]; do
         arg="$1"
+        feature=$(echo "$arg" | sed 's/--use-//g' | sed 's/--no-//g')
+        feature_var_suffix=$(printf '%s\n' "$key" | sed 's/-/_/g')
         case $arg in
-        --use-*) _enable_feature "${1/--use-/}"; shift;;
-        --no-*) _disable_feature "${1/--no-/}"; shift;;
+        --use-*) _enable_feature "$feature"; shift;;
+        --no-*) _disable_feature "$feature"; shift;;
         -h|--help) _enable_feature help; shift;;
         -s|--strict|--strict-mode) _enable_feature strict-mode; shift;;
+        -*)
+            if [ ! -z "$(eval "echo \$_dick_args_alias_$feature_var_suffix")" ]; then
+                 _enable_feature "$(eval "echo \$_dick_args_alias_$feature_var_suffix")"
+            fi
+            shift
+            ;;
         *)
-            if [[ -f "$1" ]]; then
-                _dick_source_filename="$1"
-            elif [[ ! -z "$(eval "echo \$_dick_args_alias_${1/-/_}")" ]]; then
-                 _enable_feature "$(eval "echo \$_dick_args_alias_${1/-/_}")"
+            if [ -f "$arg" ]; then
+                _dick_source_filename="$arg"
             fi
             shift
             ;;
@@ -422,13 +450,13 @@ __dick_parse_args() {
 
 __dick_parse_args $@
 
-if [[ ! "$_dick_features_enabled" =~ "help" ]] && [[ -f $_dick_source_filename ]]; then
-    if [[ "$_dick_features_enabled" =~ "shebang-args" ]]; then
+if [ $(_use_feature "help") -eq 0 ] && [ -f $_dick_source_filename ]; then
+    if [ $(_use_feature "shebang-args") -eq 1 ]; then
         __dick_parse_args $(head -n 1 "$_dick_source_filename")
     fi
     __longdick_validate_variable_names "$_dick_source_filename"
 
-    if [[ "$_dick_features_enabled" =~ "exec" ]]; then
+    if [ $(_use_feature "exec") -eq 1 ]; then
         # source <(__prepocess_long_dick "$_dick_source_filename")
         eval "$(__prepocess_long_dick "$_dick_source_filename")"
     else
@@ -439,23 +467,25 @@ else
     echo
     echo "Options:"
     for key in $_dick_features_available; do
+        key_var_suffix=$(printf '%s\n' "$key" | sed 's/-/_/g')
         is_default=""
         line_desc=""
-        desc="$(eval "echo \$_dick_help_text_${key/-/_}")"
+        
+        desc="$(eval "echo \$_dick_help_text_$key_var_suffix")"
         
         indent=""
-        if [[ "$_dick_features_default_enabled" =~ "$key" ]]; then
+        if [ $(_is_default_feature $key) -eq 1 ]; then
             printf "  --no-%-21s %s\n" "$key" "disable $desc"
             indent="  "
         else
-            if [[ "$(eval "echo \$_dick_alias_only_${key/-/_}")" != "true" ]]; then
+            if [ "$(eval "echo \$_dick_alias_only_$key_var_suffix")" != "true" ]; then
                 printf "  --use-%-20s %s\n" "$key" "enable $desc"
                 desc=""
                 indent="  "
             fi
-            flag_aliases="$(eval "echo \$_dick_args_alias_${key/-/_}")"
+            flag_aliases="$(eval "echo \$_dick_args_alias_$key_var_suffix")"
             for flag_alias in $flag_aliases; do
-                if [[ ! -z $indent ]]; then
+                if [ ! -z $indent ]; then
                     printf "%s  %3s%-21s %s\n" "$indent" "${flag_alias}" "" "$desc"
                 else
                     printf "  %-26s %s\n" "${flag_alias}" "$desc"
