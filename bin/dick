@@ -340,13 +340,14 @@ __longdick_validate_variable_names() {
     [ $exit_code -ne 0 ] && exit $exit_code
 }
 
-_dick_features_available="strict-mode shebang-args exec help"
+_dick_features_available="strict-mode shebang-args repl exec help"
 _dick_features_default_enabled="shebang-args exec"
 _dick_features_enabled="$_dick_features_default_enabled"
 
 
 _dick_help_text_shebang_args="reading arguments from shebang"
 _dick_help_text_exec="execute after pre-processing."
+_dick_help_text_repl="drop into a repl"
 
 _dick_help_text_strict_mode="strict mode; limit to permitted variable names in LongDick."
 _dick_args_alias_strict_mode="--strict --strict-mode -s "
@@ -427,7 +428,7 @@ __dick_parse_args() {
 
 __dick_parse_args $@
 
-if [ $(_use_feature "help") -eq 0 ] && [ -f $_dick_source_filename ]; then
+if [ $(_use_feature "help") -eq 0 ] && [ ! -z $_dick_source_filename ] && [ -f $_dick_source_filename ]; then
     if [ $(_use_feature "shebang-args") -eq 1 ]; then
         __dick_parse_args $(head -n 1 "$_dick_source_filename")
     fi
@@ -436,9 +437,26 @@ if [ $(_use_feature "help") -eq 0 ] && [ -f $_dick_source_filename ]; then
     if [ $(_use_feature "exec") -eq 1 ]; then
         # source <(__prepocess_long_dick "$_dick_source_filename")
         eval "$(__prepocess_long_dick "$_dick_source_filename")"
+        exit 0
     else
         __prepocess_long_dick "$_dick_source_filename"
+        exit 0
     fi
+elif [ $(_use_feature "help") -eq 0 ] && [ $(_use_feature "repl") -eq 1 ]; then
+    echo "Flopped out a Dick REPL 🍆 — type 'pull out' to quit."
+    while true; do
+        printf '🍆> ' >&2
+        IFS= read -r line || break
+        [ "$line" = "pull out" ] && break
+        eval "$line"
+
+        case $line in
+            WEE\ LINE) ;;
+            PEE\ LINE) ;;
+            WEE|PEE) echo;;
+            *) ;;
+        esac
+    done
 else
     echo "Usage: dick [options] program.dick"
     echo
@@ -473,4 +491,6 @@ else
         fi
         echo
     done
+
+    exit 0
 fi
